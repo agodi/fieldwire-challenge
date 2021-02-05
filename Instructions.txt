@@ -1,0 +1,35 @@
+Use Python 3
+
+Run: pip3 install -r requirements.txt
+Run: export FLASK_APP=application.py
+Run: flask run
+
+Example commands
+
+Projects:
+
+curl  --request GET  http://localhost:5000/projects
+
+curl -H "Content-Type: application/json" --request POST --data '{"name":"project 1"}' http://localhost:5000/projects
+
+curl  --request GET  http://localhost:5000/projects/1
+
+curl -H "Content-Type: application/json" --request PATCH --data '{"name":"project fi"}' http://localhost:5000/projects/1
+
+curl  --request DELETE  http://localhost:5000/projects/1
+
+Floorplans:
+
+curl  --request GET  http://localhost:5000/projects/1/floorplans
+
+curl -F "file=@/mnt/c/Users/XXX/Pictures/NY.png" http://localhost:5000/projects/1/floorplans
+
+curl  --request GET  http://localhost:5000/projects/1/floorplans/1
+
+curl --request PATCH -F "name=New York" -F "file=@/mnt/c/Users/XXX/Pictures/NY.png" http://localhost:5000/projects/1/floorplans/1
+
+curl  --request DELETE  http://localhost:5000/projects/1/floorplans/1
+
+To retrieve images use Postman or browser.
+
+GET http://localhost:5000/images/1/1/NY_large.png
