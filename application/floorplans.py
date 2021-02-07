@@ -1,6 +1,6 @@
 from application import app
 from flask import jsonify, request, send_file
-from .helper import load_project_floorplans, load_floorplan, create_floorplan, update_floorplan, drop_floorplan, fetch_image
+from .helper import load_project_floorplans, load_floorplan, create_floorplan, update_floorplan, drop_floorplan, fetch_image, filepath_for_image
 
 
 @app.route('/projects/<string:project_id>/floorplans', methods=['GET'])
@@ -51,10 +51,13 @@ def delete_floorplan(project_id, floorplan_id):
         return jsonify({"status": "fail", "error": str(e)}), 500
 
 
-@app.route('/images/<string:project_id>/<string:floorplan_id>/<string:name>', methods=['GET'])
+@app.route('/projects/<string:project_id>/floorplans/<string:floorplan_id>/images/<string:name>', methods=['GET'])
 def get_image(project_id, floorplan_id, name):
     try:
-        image = fetch_image(project_id, floorplan_id, name)
-        return send_file(image)
+        filepath = filepath_for_image(project_id, floorplan_id, name)
+        success = fetch_image(project_id, floorplan_id, name, filepath)
+        if success:
+            return send_file(filepath, mimetype='image/png')
+        return jsonify({"status": "fail", "error": "Can't retrieve image"}), 500
     except RuntimeError as e:
         return jsonify({"status": "fail", "error": str(e)}), 500

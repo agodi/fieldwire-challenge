@@ -15,8 +15,8 @@ def read_all_projects():
 @app.route('/projects', methods=['POST'])
 def create_project():
     try:
-        project_id = add_project(request.data)
-        return jsonify({"status": "success", "project_id": project_id}), 200
+        project_resource = add_project(request.data)
+        return jsonify({"status": "success", "project": project_resource}), 200
     except (ValueError, AttributeError) as e:
         return jsonify({"status": "fail", "error": str(e)}), 400
     except RuntimeError as e:
