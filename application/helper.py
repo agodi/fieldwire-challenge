@@ -2,8 +2,6 @@ from application import app, sql_conn
 from json import loads
 from .models import Project, Floorplan
 from PIL import Image
-
-import io
 import os
 
 
@@ -24,7 +22,9 @@ select_floorplan = """SELECT id, project_id, name, original_resource_url, thumb_
 select_project_floorplans_ids = """SELECT id FROM floorplan WHERE project_id = %s"""
 insert_floorplan = """INSERT INTO floorplan (id, project_id, name, original_resource_url, thumb_resource_url, 
                     large_resource_url) VALUES (%s, %s, %s, %s, %s, %s)"""
-update_floorplan = """UPDATE floorplan SET name = %s WHERE id = %s AND project_id = %s"""
+update_floorplan_name = """UPDATE floorplan SET name = %s WHERE id = %s AND project_id = %s"""
+update_floorplan_resources = """UPDATE floorplan SET original_resource_url = %s, thumb_resource_url = %s, large_resource_url = %s 
+                                WHERE id = %s AND project_id = %s"""
 delete_floorplan = """DELETE FROM floorplan WHERE id = %s AND project_id = %s"""
 
 select_original_image = """SELECT original_image FROM floorplan_image WHERE id = %s AND project_id = %s"""
@@ -223,30 +223,51 @@ def update_floorplan(project_id, floorplan_id, data, request_files):
     if not all(field in floorplan_fields for field in data):
         raise AttributeError("Unknown floorplan attributes in request")
 
-    for field in data:
-        floorplan[field] = data[field]
+    if "name" in data:
+        update_floorplan_name_field(data["name"], floorplan.id, floorplan.project_id)
 
     if "file" in request_files:
-        delete_files(floorplan)
-        update_images(floorplan,  request_files)
+        update_floorplan_images(request_files["file"], floorplan.id, floorplan.project_id)
+
+    sql_conn.commit()
 
     return True
 
 
-def update_images(floorplan, request_files):
-    project_id = floorplan["project_id"]
-    floorplan_id = floorplan["id"]
-    file = request_files["file"]
+def update_floorplan_name_field(name, floorplan_id, project_id):
+    cursor = sql_conn.cursor()
+    cursor.execute(update_floorplan_name, (name, floorplan_id, project_id))
+    cursor.close()
+
+
+def update_floorplan_images(file, floorplan_id, project_id):
     filename = file.filename
     name = filename[:filename.rfind(".")]
     extension = filename[filename.rfind("."):]
     thumb_filename = "{}_thumb{}".format(name, extension)
     large_filename = "{}_large{}".format(name, extension)
-    filepath = os.path.join(upload_folder, "{}_{}_{}".format(project_id, floorplan_id, filename))
-    floorplan["original"] = image_resource_path(project_id, floorplan_id, filename)
-    floorplan["thumb"] = image_resource_path(project_id, floorplan_id, thumb_filename)
-    floorplan["large"] = image_resource_path(project_id, floorplan_id, large_filename)
-    store_files(floorplan, filepath, file)
+    store_temporary_images(file, filename)
+
+    original = open(filename, "rb")
+    thumb = open("{}_{}".format("thumb", filename), "rb")
+    large = open("{}_{}".format("large", filename), "rb")
+
+    image_cursor = sql_conn.cursor()
+    image_cursor.execute(update_image, (floorplan_id, project_id, original.read(), thumb.read(), large.read()))
+
+    original.close()
+    thumb.close()
+    large.close()
+    image_cursor.close()
+    delete_temporary_images(filename)
+
+    resource_cursor = sql_conn.cursor()
+    resource_cursor.execute(
+        update_floorplan_resources,
+        (image_resource_path(project_id, floorplan_id, filename),
+         image_resource_path(project_id, floorplan_id, thumb_filename),
+         image_resource_path(project_id, floorplan_id, large_filename)))
+    resource_cursor.close()
 
 
 def drop_floorplan(project_id, floorplan_id):
