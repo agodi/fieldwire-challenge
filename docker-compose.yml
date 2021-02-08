@@ -1,13 +1,13 @@
 version: "3.9"
 services:
   api:
-    image: fieldwire:api
+    image: agomdia/my-docker-repo:fieldwire-api
     ports:
       - "5000:5000"
     depends_on:
       - db
     command: ["./wait-for-it.sh", "db:3306", "--", "flask", "run"]
   db:
-    image: fieldwire:db
+    image: agomdia/my-docker-repo:fieldwire-db
     ports:
       - "3306:3306"
