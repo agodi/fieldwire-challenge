@@ -253,7 +253,7 @@ def update_floorplan_images(file, floorplan_id, project_id):
     large = open("{}_{}".format("large", filename), "rb")
 
     image_cursor = sql_conn.cursor()
-    image_cursor.execute(update_image, (floorplan_id, project_id, original.read(), thumb.read(), large.read()))
+    image_cursor.execute(update_image, (original.read(), thumb.read(), large.read(), floorplan_id, project_id))
 
     original.close()
     thumb.close()
@@ -266,7 +266,9 @@ def update_floorplan_images(file, floorplan_id, project_id):
         update_floorplan_resources,
         (image_resource_path(project_id, floorplan_id, filename),
          image_resource_path(project_id, floorplan_id, thumb_filename),
-         image_resource_path(project_id, floorplan_id, large_filename)))
+         image_resource_path(project_id, floorplan_id, large_filename),
+         floorplan_id,
+         project_id))
     resource_cursor.close()
 
 
