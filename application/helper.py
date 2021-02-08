@@ -353,3 +353,18 @@ def delete_temporary_images(filename):
     os.remove(filename)
     os.remove("{}_{}".format("thumb", filename))
     os.remove("{}_{}".format("large", filename))
+
+
+def api_response(status, data=None, error=None):
+    response = {
+            "status" : status,
+        }
+
+    if data:
+        response["data"] = data
+    elif error:
+        response["error"] = error
+
+    return {
+        "response" : response
+    }
