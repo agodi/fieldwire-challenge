@@ -6,7 +6,7 @@ from .helper import load_project_floorplans, load_floorplan, create_floorplan, u
 @app.route('/projects/<string:project_id>/floorplans', methods=['GET'])
 def get_all_floorplans(project_id):
     try:
-        return jsonify(load_project_floorplans(project_id)), 200
+        return jsonify(api_response(status="success", data=load_project_floorplans(project_id))), 200
     except (ValueError, AttributeError, RuntimeError) as e:
         return jsonify(api_response(status="fail", error=str(e))), 500
 
@@ -14,7 +14,7 @@ def get_all_floorplans(project_id):
 @app.route('/projects/<string:project_id>/floorplans', methods=['POST'])
 def add_floorplan(project_id):
     try:
-        return jsonify(create_floorplan(project_id, request.form, request.files)), 200
+        return jsonify(api_response(status="success", data=create_floorplan(project_id, request.form, request.files))), 200
     except (ValueError, AttributeError, RuntimeError) as e:
         return jsonify(api_response(status="fail", error=str(e))), 500
 
@@ -22,7 +22,7 @@ def add_floorplan(project_id):
 @app.route('/projects/<string:project_id>/floorplans/<string:floorplan_id>', methods=['GET'])
 def get_floorplan(project_id, floorplan_id):
     try:
-        return jsonify(load_floorplan(project_id, floorplan_id)), 200
+        return jsonify(api_response(status="success", data=load_floorplan(project_id, floorplan_id))), 200
     except (ValueError, AttributeError, RuntimeError) as e:
         return jsonify(api_response(status="fail", error=str(e))), 500
 
@@ -31,7 +31,7 @@ def get_floorplan(project_id, floorplan_id):
 def patch_floorplan(project_id, floorplan_id):
     try:
         update_floorplan(project_id, floorplan_id, request.form, request.files)
-        return jsonify({"status": "success"}), 200
+        return jsonify(api_response(status="success")), 200
     except (ValueError, AttributeError, RuntimeError) as e:
         return jsonify(api_response(status="fail", error=str(e))), 500
 
@@ -40,7 +40,7 @@ def patch_floorplan(project_id, floorplan_id):
 def delete_floorplan(project_id, floorplan_id):
     try:
         drop_floorplan(project_id, floorplan_id)
-        return jsonify({"status": "success"}), 200
+        return jsonify(api_response(status="success")), 200
     except (ValueError, AttributeError, RuntimeError) as e:
         return jsonify(api_response(status="fail", error=str(e))), 500
 

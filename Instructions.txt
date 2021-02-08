@@ -22,14 +22,14 @@ Floorplans:
 
 curl  --request GET  http://localhost:5000/projects/1/floorplans
 
-curl -F "file=@/mnt/c/Users/XXX/Pictures/NY.png" http://localhost:5000/projects/1/floorplans
+curl -F "file=@/mnt/c/Users/XXX/Pictures/XXX.png" http://localhost:5000/projects/1/floorplans
 
 curl  --request GET  http://localhost:5000/projects/1/floorplans/1
 
-curl --request PATCH -F "name=New York" -F "file=@/mnt/c/Users/XXX/Pictures/NY.png" http://localhost:5000/projects/1/floorplans/1
+curl --request PATCH -F "name=New York" -F "file=@/mnt/c/Users/XXX/Pictures/XXX.png" http://localhost:5000/projects/1/floorplans/1
 
 curl  --request DELETE  http://localhost:5000/projects/1/floorplans/1
 
 To retrieve images use Postman or browser.
 
-GET http://localhost:5000/images/1/1/NY_large.png
+GET http://localhost:5000/projects/1/floorplans/1/images/XXX.png

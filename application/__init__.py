@@ -20,9 +20,11 @@ if os.path.exists(tmp_dir):
     shutil.rmtree(tmp_dir)
 os.mkdir(tmp_dir)
 
-sql_conn = mysql.connector.connect(user='fieldwire', password='password',
-                              host='127.0.0.1',
-                              database='fieldwire')
+sql_conn = mysql.connector.connect(
+    user='fieldwire',
+    password='fieldwire',
+    host='db',
+    database='fieldwire')
 
 from application import projects, floorplans
 

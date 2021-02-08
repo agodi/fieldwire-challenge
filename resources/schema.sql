@@ -1,5 +1,9 @@
 CREATE DATABASE IF NOT EXISTS fieldwire;
 
+CREATE USER 'fieldwire'@'%' IDENTIFIED BY 'fieldwire';
+GRANT ALL PRIVILEGES ON *.* TO 'fieldwire'@'%';
+FLUSH PRIVILEGES;
+
 USE fieldwire;
 
 CREATE TABLE IF NOT EXISTS project (

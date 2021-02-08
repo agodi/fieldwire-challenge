@@ -360,9 +360,9 @@ def api_response(status, data=None, error=None):
             "status" : status,
         }
 
-    if data:
+    if data is not None:
         response["data"] = data
-    elif error:
+    elif error is not None:
         response["error"] = error
 
     return {
