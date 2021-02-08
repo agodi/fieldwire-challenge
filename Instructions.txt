@@ -1,8 +1,16 @@
+Run: docker-compose up
+
+or
+
+Create Database using schema.sql
+
 Use Python 3
 
 Run: pip3 install -r requirements.txt
 Run: export FLASK_APP=application.py
 Run: flask run
+
+------------------------------------------------------------------------------------------------------------------------
 
 Example commands
 
